@@ -8,29 +8,21 @@ const PDFDocument = require('pdfkit')
 app.use(express.json({limit: '300kb'}));
 app.use(express.urlencoded({limit: '300kb', extended: true}));
 
-app.use(express.json());
-app.use(express.urlencoded());
-
-app.use(function (req, res, next) {
-    // fix this to only allow localhost??
-    res.header("Access-Control-Allow-Origin", "*")
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next()
-});
-
 app.get('/', (req, res, next) => {
     res.send('Hello World!');
 })
 
-app.post('/', (req, res, next) => {
-    console.log('POST received')
+app.get('/api', (req, res) => {
+    res.send('This page is for converting POST to PDF')
+});
 
+app.post('/api', (req, res, next) => {
     // get the POST data
     var page1 = req.body.page1,
         page2 = req.body.page2,
         playerdata = req.body.playerdata;
 
-    console.log('bytes: '+req.socket.bytesRead)
+    console.log('POST data size: '+req.socket.bytesRead+' bytes')
 
     if ((page1) && (page2) && (playerdata)) {
         // create a new PDF
@@ -63,8 +55,6 @@ app.post('/', (req, res, next) => {
     } else {
         res.send('{"result":"error","description":"did not receive appropriate data"}')
     }
-
-    console.log('POST finished')
 });
 
-app.listen(3000, () => console.log('Image to PDF Server Running!'))
+app.listen(3000, () => console.log('pdfServer is running!'))
